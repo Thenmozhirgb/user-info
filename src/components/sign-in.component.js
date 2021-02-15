@@ -48,6 +48,7 @@ export class SignIn extends Component {
               }); 
               if(registeredUser) {
                 this.props.signInSuccess();
+                this.props.history.push('/user-list')
               }
             }
           });
