@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Component} from "react";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
@@ -6,69 +6,111 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "bootstrap/dist/css/bootstrap.css";
 import "./App.css"; 
-
+import { connect } from "react-redux";
 
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 import CreateUser from "./components/create-user.component";
 import EditUser from "./components/edit-user.component";
 import userList from "./components/user-list.component";
+import signIn from "./components/sign-in.component";
+import { signOutSuccess } from "./redux/actions/userAction";
 
+class App extends Component {
+  
+  constructor(props) {
+    super(props)
+    this.onSignOut = this.onSignOut.bind(this);
+  }
+  
+  onSignOut() {
+    this.props.signOutSuccess();
+    this.setState({ redirect: "/someRoute" });
+  }
 
+  render() {
+    return (<Router>
+      <div className="App">
+        <header className="App-header">
+          <Navbar bg="dark" variant="dark">
+            <Container>
 
-function App() {
-  return (<Router>
-    <div className="App">
-      <header className="App-header">
-        <Navbar bg="dark" variant="dark">
-          <Container>
-
-            <Navbar.Brand>
-              <Link to={"/create-user"} className="nav-link">
-                User Information App
-              </Link>
-            </Navbar.Brand>
-
-            <Nav className="justify-content-end">
-              <Nav>
-                <Link to={"/create-user"} className="nav-link">
-                  Create User
+              <Navbar.Brand>
+                <Link to={"/sign-in"} className="nav-link">
+                  User Information App
                 </Link>
+              </Navbar.Brand>
+
+              <Nav className="justify-content-end">
+                {
+                  !this.props.isSignedIn &&
+                  <Nav>
+                    <Link to={"/sign-in"} className="nav-link">
+                      Sign In
+                    </Link>
+                  </Nav>
+                }
+                {
+                  !this.props.isSignedIn &&
+                  <Nav>
+                    <Link to={"/create-user"} className="nav-link">
+                      Sign Up
+                    </Link>
+                  </Nav>
+                }
+
+                {/* <Nav>
+                  <Link to={"/edit-user/:id"} className="nav-link">
+                    Edit User
+                  </Link>
+                </Nav> */}
+                {
+                  this.props.isSignedIn &&
+                  <Nav>
+                    <Link to={"/user-list"} className="nav-link">
+                      User List
+                    </Link>
+                  </Nav>
+                }
+                {
+                  this.props.isSignedIn &&
+                  <Nav>
+                    <Link to={"/sign-out"} className="nav-link" onClick={this.onSignOut}>
+                      Sign Out
+                    </Link>
+                  </Nav>
+                }
               </Nav>
 
-              {/* <Nav>
-                <Link to={"/edit-user/:id"} className="nav-link">
-                  Edit User
-                </Link>
-              </Nav> */}
+            </Container>
+          </Navbar>
+        </header>
 
-              <Nav>
-                <Link to={"/user-list"} className="nav-link">
-                  User List
-                </Link>
-              </Nav>
-            </Nav>
-
-          </Container>
-        </Navbar>
-      </header>
-
-      <Container>
-        <Row>
-          <Col md={12}>
-            <div className="wrapper">
-              <Switch>
-                <Route exact path='/' component={CreateUser} />
-                <Route path="/create-user" component={CreateUser} />
-                <Route path="/edit-user/:id" component={EditUser} />
-                <Route path="/user-list" component={userList} />
-              </Switch>
-            </div>
-          </Col>
-        </Row>
-      </Container>
-    </div>
-  </Router>);
+        <Container>
+          <Row>
+            <Col md={12}>
+              <div className="wrapper">
+                <Switch>
+                  <Route exact path='/' component={CreateUser} />
+                  <Route path="/create-user" component={CreateUser} />
+                  <Route path="/edit-user/:id" component={EditUser} />
+                  <Route path="/user-list" component={userList} />
+                  <Route path="/sign-in" component={signIn} />
+                </Switch>
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </div>
+    </Router>);
+  }
 }
 
-export default App;
+const mapStateToProps = state =>{
+  return {isSignedIn : state.userReducer.isSignedIn}
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  signOutSuccess: () => dispatch(signOutSuccess())
+})
+export default connect(mapStateToProps, mapDispatchToProps)(App);
