@@ -25,7 +25,6 @@ class App extends Component {
   
   onSignOut() {
     this.props.signOutSuccess();
-    this.props.history.push('/sign-in')
   }
 
   render() {
