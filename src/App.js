@@ -25,7 +25,7 @@ class App extends Component {
   
   onSignOut() {
     this.props.signOutSuccess();
-    this.setState({ redirect: "/someRoute" });
+    this.props.history.push('/sign-in')
   }
 
   render() {
