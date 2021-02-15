@@ -45,22 +45,21 @@ export class SignIn extends Component {
             if(res.data) {
               var registeredUser = res.data.some( user => { 
                 return userObject.userid === user.userid && userObject.password === user.password;
-              });
+              }); 
               if(registeredUser) {
                 this.props.signInSuccess();
               }
             }
           });
-          this.props.signInSuccess();
-        this.setState({ userid: '', password:'' });
+          this.setState({ userid: '', password:'' });
       }
     
     render() {
         return (<div className="form-wrapper">
           <Form onSubmit={this.onSubmit}>
             <Form.Group controlId="Name">
-              <Form.Label>Username</Form.Label>
-              <Form.Control type="text" value={this.state.username} onChange={this.onChangeUserUsername} />
+              <Form.Label>User Id</Form.Label>
+              <Form.Control type="text" value={this.state.userid} onChange={this.onChangeUserUsername} />
             </Form.Group>
     
             <Form.Group controlId="Password">
