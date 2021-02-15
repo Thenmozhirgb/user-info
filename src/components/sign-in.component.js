@@ -2,8 +2,10 @@ import React, { Component } from "react";
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
+import { connect } from "react-redux";
+import { signInSuccess } from "../redux/actions/userAction";
 
-export default class SignIn extends Component {
+export class SignIn extends Component {
     constructor(props) {
         super(props)
     
@@ -15,13 +17,13 @@ export default class SignIn extends Component {
     
         // Setting up state
         this.state = {
-          username: '',
+          userid: '',
           password: ''
         }
       }
     
       onChangeUserUsername(e) {
-        this.setState({ username: e.target.value })
+        this.setState({ userid: e.target.value })
       }
 
       onChangeUserPassword(e) {
@@ -32,17 +34,25 @@ export default class SignIn extends Component {
       onSubmit(e) {
         e.preventDefault()
     
-        const UserObject = {
-          username: this.state.username,
+        const userObject = {
+          userid: this.state.userid,
           password: this.state.password
         };
     
-        axios.post('http://localhost:4000/s/create-user', userObject)
+        axios.get('http://localhost:4000/Users', userObject)
           .then(res => {
             console.log(res.data);
-            this.props.createUser(res.data);
+            if(res.data) {
+              var registeredUser = res.data.some( user => { 
+                return userObject.userid === user.userid && userObject.password === user.password;
+              });
+              if(registeredUser) {
+                this.props.signInSuccess();
+              }
+            }
           });
-        this.setState({ username: '', password:'' });
+          this.props.signInSuccess();
+        this.setState({ userid: '', password:'' });
       }
     
     render() {
@@ -65,3 +75,12 @@ export default class SignIn extends Component {
     </div>);
   }
 }
+
+const mapStateToProps = (state) => ({
+  ...state.userReducer
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  signInSuccess: () => dispatch(signInSuccess())
+})
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn);
