@@ -8,7 +8,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "./App.css"; 
 import { connect } from "react-redux";
 
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link, useHistory } from "react-router-dom";
 
 import CreateUser from "./components/create-user.component";
 import EditUser from "./components/edit-user.component";
@@ -91,7 +91,7 @@ class App extends Component {
             <Col md={12}>
               <div className="wrapper">
                 <Switch>
-                  <Route exact path='/' component={CreateUser} />
+                  <Route exact path='/' component={signIn} />
                   <Route path="/create-user" component={CreateUser} />
                   <Route path="/edit-user/:id" component={EditUser} />
                   <Route path="/user-list" component={userList} />
